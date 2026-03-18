@@ -51,7 +51,7 @@ Simon is a researcher, teacher, and architect specializing in digital fabricatio
 * **LinkedIn**: [Profile](https://www.linkedin.com/in/simongriffioen/)
 
 ### Kevin Moreno Gata
-<img src="./images/team-kevin.jpg" width="100" />
+<img src="./images/team-kevin.png" width="100" />
 
 Kevin is an architect and researcher at RWTH Aachen University (Chair of Structures and Structural Design) and holds a doctoral degree in timber design. His work lies at the intersection of computational modelling, structural design, and digital fabrication, investigating how naturally grown timber can serve as a basis for load-bearing structures.
 
