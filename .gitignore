@@ -1,0 +1,10 @@
+# Ignore workshop data payloads under data/
+data/**
+
+# Keep folder structure and docs tracked
+!data/
+!data/README.md
+!data/branches/
+!data/branches/.gitkeep
+!data/3d_scan/
+!data/3d_scan/.gitkeep

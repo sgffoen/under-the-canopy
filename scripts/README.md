@@ -1,4 +1,4 @@
-# Digital Tools - Workshop Setup
+# FoC26 Workshop Setup
 
 Grasshopper workflow to work with irregular and bifurcated branches.
 
