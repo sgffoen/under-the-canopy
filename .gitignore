@@ -8,3 +8,7 @@ data/**
 !data/branches/.gitkeep
 !data/3d_scan/
 !data/3d_scan/.gitkeep
+
+# Python bytecode/cache
+__pycache__/
+*.py[cod]
