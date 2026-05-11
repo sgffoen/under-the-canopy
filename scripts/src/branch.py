@@ -563,7 +563,7 @@ class Branch:
                 continue
 
             num_planes = max(1, int(path_length // resolution))
-            # Exclude the very start (bifurcation node) and end (leaf) to
+            # Exclude the very start (bifurcation node) to
             # avoid degenerate contours at the tips.
             distances = np.linspace(0.0, path_length, num_planes + 2)[1:]
 

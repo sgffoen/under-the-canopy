@@ -59,7 +59,7 @@ def mesh_bounding_box(mesh):
     return bbox
 
 
-def load_branch_meshes(index: Optional[int] = None, precision=None) -> List[Mesh]:
+def load_branch_meshes(index: Optional[int] = None, precision=None) -> Tuple[List[Mesh], List[str]]:
     """Load OBJ meshes from data/branches as COMPAS meshes.
 
     Parameters
@@ -74,8 +74,9 @@ def load_branch_meshes(index: Optional[int] = None, precision=None) -> List[Mesh
 
     Returns
     -------
-    list[:class:`compas.datastructures.Mesh`]
-        Loaded meshes. If ``index`` is provided, this list has one mesh.
+    tuple[list[:class:`compas.datastructures.Mesh`], list[str]]
+        Loaded meshes and their branch ids. If ``index`` is provided, both
+        lists contain one item.
     """
     root = Path(__file__).resolve().parents[2]
     branches_dir = root / "data" / "branches"
@@ -120,7 +121,9 @@ def load_branch_meshes(index: Optional[int] = None, precision=None) -> List[Mesh
                 )
             selected = [obj_files[position]]
 
-    return [Mesh.from_obj(str(path), precision=precision) for path in selected]
+    meshes = [Mesh.from_obj(str(path), precision=precision) for path in selected]
+    branch_ids = [path.stem for path in selected]
+    return meshes, branch_ids
 
 
 def principal_axes(mesh: Mesh) -> Tuple[np.ndarray, np.ndarray]:
