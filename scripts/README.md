@@ -32,6 +32,14 @@ cd under-the-canopy
 - This script will automatically create a virtual environment and install all necessary libraries
 - Wait for the installation to complete
 
+### 4. Grasshopper Scripts
+
+After the environment is set up, the other Grasshopper files can be opened in order:
+
+- `01_database.ghx` - Downloads OBJ branch meshes from the workshop database into the local `data/` folder.
+- `02_branch_overview.ghx` - Loads the branch meshes and preprocesses them for inspection and overview.
+- `03_centerline.ghx` - Computes branch centerlines, bifurcation points, and related centerline outputs.
+
 ## Understanding the Workflow
 
 The Grasshopper files (`.ghx`) are the visual interface for this workflow. The Python scripts in the `src/` folder provide the core functionality used by these Grasshopper definitions.
@@ -40,12 +48,13 @@ The Grasshopper files (`.ghx`) are the visual interface for this workflow. The P
 
 The `src/` folder contains the Python modules that power the workflow:
 
-- `branch.py` - Branch data structures and operations
-- `centerline.py` - Centerline extraction and processing
-- `graph_utils.py` - Graph-based utilities
+- `branch.py` - Branch preprocessing, bifurcation logic, and centerline methods
+- `centerline.py` - Centerline extraction and centerline post-processing tools
+- `database.py` - Google Drive database access and branch mesh download helpers
+- `graph_utils.py` - Graph-based utilities for branch paths and bifurcations
 - `growth_center.py` - Growth center calculations
-- `helpers.py` - Helper functions
-- `mesh_utils.py` - Mesh operations
+- `helpers.py` - Shared helper functions, including grid layout tools
+- `mesh_utils.py` - Mesh loading, preprocessing, and slicing helpers
 
 You can inspect these files to understand the underlying algorithms and modify them as needed for your specific use case.
 
