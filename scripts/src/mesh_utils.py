@@ -10,6 +10,8 @@ unless stated otherwise.
 from __future__ import annotations
 
 import math
+import re
+from pathlib import Path
 from typing import List, Optional, Tuple
 
 import numpy as np
@@ -55,6 +57,70 @@ def mesh_bounding_box(mesh):
     bbox = oriented_bounding_box_numpy(v)
     bbox = Box.from_bounding_box(bbox)
     return bbox
+
+
+def load_branch_meshes(index: Optional[int] = None, precision=None) -> List[Mesh]:
+    """Load OBJ meshes from data/branches as COMPAS meshes.
+
+    Parameters
+    ----------
+    index : int, optional
+        Optional branch index. If provided, only one mesh is loaded.
+        The function first tries to match branch naming (for example
+        ``index=3`` -> ``b-003.obj``). If that does not exist, it falls back
+        to 1-based positional selection in the sorted OBJ list.
+    precision : str, optional
+        Optional precision passed to :meth:`compas.datastructures.Mesh.from_obj`.
+
+    Returns
+    -------
+    list[:class:`compas.datastructures.Mesh`]
+        Loaded meshes. If ``index`` is provided, this list has one mesh.
+    """
+    root = Path(__file__).resolve().parents[2]
+    branches_dir = root / "data" / "branches"
+
+    if not branches_dir.exists():
+        raise FileNotFoundError("Branches folder not found: {}".format(branches_dir))
+
+    obj_files = sorted(
+        branches_dir.glob("*.obj"),
+        key=lambda p: _obj_sort_key(p.name),
+    )
+
+    if not obj_files:
+        return []
+
+    selected: List[Path]
+    if index is None:
+        selected = obj_files
+    else:
+        try:
+            idx = int(index)
+        except (TypeError, ValueError):
+            raise ValueError("index must be an integer.")
+
+        if idx < 1:
+            raise ValueError("index must be >= 1.")
+
+        branch_name = f"b-{idx:03d}"
+        name_match = next((p for p in obj_files if p.stem.lower() == branch_name), None)
+
+        if name_match is not None:
+            selected = [name_match]
+        else:
+            position = idx - 1
+            if position >= len(obj_files):
+                raise IndexError(
+                    "index {} out of range for {} OBJ files in {}".format(
+                        idx,
+                        len(obj_files),
+                        branches_dir,
+                    )
+                )
+            selected = [obj_files[position]]
+
+    return [Mesh.from_obj(str(path), precision=precision) for path in selected]
 
 
 def principal_axes(mesh: Mesh) -> Tuple[np.ndarray, np.ndarray]:
@@ -195,3 +261,11 @@ def flip_mesh_top_bottom(mesh):
     flipped_mesh = mesh.transformed(transform)
 
     return flipped_mesh 
+
+
+def _obj_sort_key(filename: str):
+    stem = Path(filename).stem
+    match = re.search(r"(\d+)$", stem)
+    if match:
+        return (0, int(match.group(1)), stem.lower())
+    return (1, stem.lower())

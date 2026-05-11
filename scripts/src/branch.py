@@ -168,7 +168,7 @@ class Branch:
         """
         if self._true_bifurcation_graph is None:
             graph = self.skeleton_bifurcation_graph()
-            step = self._compute_bifurcation_step(tolerance=5.0)
+            step = self._compute_bifurcation_step(tolerance=5.0, resolution=30.0)
 
             trunk_path = get_axis_path(graph, 0)
             axis_1_path = get_axis_path(graph, 1)
@@ -368,7 +368,7 @@ class Branch:
         """
         contours = self._contours(self.true_bifurcation_graph(), resolution=resolution)
 
-        bif_pt = self.compute_bifurcation_point()
+        bif_pt = self.compute_bifurcation_point(resolution=resolution)
         centerlines = []
         sections = []
 
@@ -402,7 +402,7 @@ class Branch:
         """
         contours = self._contours(self.true_bifurcation_graph(), resolution=resolution)
 
-        bif_pt = self.compute_bifurcation_point()
+        bif_pt = self.compute_bifurcation_point(resolution=resolution)
         centerlines = []
         circular_sections = []
 
@@ -625,23 +625,41 @@ class Branch:
         graph = self.skeleton_bifurcation_graph()
         return get_bifurcation_angle(graph)
 
-    def compute_bifurcation_point(self, tolerance=5.0):
+    def compute_bifurcation_point(self, tolerance=5.0, resolution=30.0):
         """Compute the bifurcation point by walking from the bifurcation node toward the end nodes node by node of each axis simultaneously and calculate the angle until it matches with the bifurcation angle.
+        
+        Parameters
+        ----------
+        tolerance : float
+            Angle tolerance in degrees. Default is 5.0.
+        resolution : float
+            Resolution for contour slicing in mm. Default is 30.0.
         
         Returns
         -------
         :class:`compas.geometry.Point`
             The computed bifurcation point.
         
-        
         """
         graph = self.skeleton_bifurcation_graph()
         trunk_path = get_axis_path(graph, 0)
-        step = self._compute_bifurcation_step(tolerance=tolerance)
+        step = self._compute_bifurcation_step(tolerance=tolerance, resolution=resolution)
         return Point(*trunk_path[step])
 
-    def _compute_bifurcation_step(self, tolerance):
-        """Return the trunk-path index of the computed bifurcation node."""
+    def _compute_bifurcation_step(self, tolerance, resolution=30.0):
+        """Return the trunk-path index of the computed bifurcation node.
+        
+        For each candidate step, this method trims the graph at that step and then
+        measures the angle using the actual first contours from the trimmed graph.
+        This ensures the angle matches the final centerline geometry within tolerance.
+
+        Parameters
+        ----------
+        tolerance : float
+            Angle tolerance in degrees.
+        resolution : float
+            Resolution for contour slicing in mm.
+        """
         graph = self.skeleton_bifurcation_graph()
         trunk_path = get_axis_path(graph, 0)
         axis_1_path = get_axis_path(graph, 1)
@@ -657,8 +675,33 @@ class Branch:
 
         for step in range(1, max_step + 1):
             trunk_pt = Point(*trunk_path[step])
-            axis_1_pt = Point(*axis_1_path[step])
-            axis_2_pt = Point(*axis_2_path[step])
+            
+            # Trim the graph at this step to match what the centerline will use
+            new_bif_node = trunk_path[step]
+            trimmed_paths = [
+                trunk_path[step:],
+                [new_bif_node] + axis_1_path[step:],
+                [new_bif_node] + axis_2_path[step:],
+            ]
+            trimmed_graph = paths_to_graph(trimmed_paths)
+            
+            # Get contours from the trimmed graph
+            contours_trimmed = self._contours(trimmed_graph, resolution=resolution)
+            
+            axis_1_contours = contours_trimmed.get(1, [])
+            axis_2_contours = contours_trimmed.get(2, [])
+            
+            # Use the first contour from each trimmed axis
+            if not axis_1_contours or not axis_2_contours:
+                continue
+            
+            try:
+                axis_1_cnt = centroid_points(axis_1_contours[0].points)
+                axis_2_cnt = centroid_points(axis_2_contours[0].points)
+                axis_1_pt = axis_1_cnt if isinstance(axis_1_cnt, Point) else Point(*axis_1_cnt)
+                axis_2_pt = axis_2_cnt if isinstance(axis_2_cnt, Point) else Point(*axis_2_cnt)
+            except Exception:
+                continue
 
             v1 = axis_1_pt - trunk_pt
             v2 = axis_2_pt - trunk_pt
