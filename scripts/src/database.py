@@ -26,7 +26,12 @@ def collect_branch_meshes(
     download: bool = False,
     branch_count: int = 52,
 ) -> Tuple[List[str], List[str], List[str], List[str]]:
-    """Collect mesh files from Google Drive branch folders."""
+    """Collect mesh files from Google Drive folders.
+
+    This keeps the original branch flow (``b-001/processed/mesh.*``) and also
+    includes flat files from ``bf`` and ``gb`` folders (for example
+    ``t-102.stl`` or ``t-001.obj``).
+    """
     out_files: List[str] = []
     out_names: List[str] = []
     out_folders: List[str] = []
@@ -105,6 +110,51 @@ def collect_branch_meshes(
         out_files.append(result_path)
         out_names.append(renamed_file_name)
         out_folders.append(branch_name)
+
+    # Extra datasets: data/bf/*.stl|*.obj and data/gb/*.stl|*.obj
+    for extra_folder_name in ("bf", "gb"):
+        extra_folder = find_child_folder(root_id, extra_folder_name, api_key)
+        if extra_folder is None:
+            log.append(f"{extra_folder_name}: folder not found.")
+            continue
+
+        children = list_children(extra_folder.id, api_key)
+        extra_files = [
+            child
+            for child in children
+            if child.mime_type != FOLDER_MIME and _is_supported_extra_file(child.name)
+        ]
+
+        if not extra_files:
+            log.append(f"{extra_folder_name}: no .obj/.stl files found.")
+            continue
+
+        for child in sorted(extra_files, key=lambda f: f.name.lower()):
+            download_url = (
+                "https://www.googleapis.com/drive/v3/files/"
+                f"{child.id}?alt=media&key={quote(api_key)}"
+            )
+
+            # Prefix with dataset folder to avoid filename collisions.
+            renamed_file_name = f"{extra_folder_name}-{child.name}"
+            result_path = download_url
+
+            if download and cache_path is not None:
+                local_path = cache_path / renamed_file_name
+                try:
+                    urlretrieve(download_url, local_path)
+                except Exception as exc:
+                    log.append(f"{extra_folder_name}/{child.name}: download failed - {exc}")
+                    continue
+
+                result_path = str(local_path)
+                log.append(f"{extra_folder_name}/{child.name}: downloaded as {renamed_file_name}")
+            else:
+                log.append(f"{extra_folder_name}/{child.name}: found")
+
+            out_files.append(result_path)
+            out_names.append(renamed_file_name)
+            out_folders.append(extra_folder_name)
 
     return out_files, out_names, out_folders, log
 
@@ -263,3 +313,8 @@ def escape_drive_query(value: str) -> str:
 def _is_mesh_name(name: str) -> bool:
     stem = Path(name).stem
     return stem.lower() == "mesh" or name.lower() == "mesh"
+
+
+def _is_supported_extra_file(name: str) -> bool:
+    suffix = Path(name).suffix.lower()
+    return suffix in {".obj", ".stl"}

@@ -63,6 +63,21 @@ class Branch:
         pts = self.bounding_box().points
         z_values = [pt.z for pt in pts]
         return max(z_values) - min(z_values)
+
+    def width(self):
+        """Compute the width of the branch, defined as the maximum of the X and Y dimensions of the bounding box.
+
+        Returns
+        -------
+        float
+            The width of the branch in mm.
+        """
+        pts = self.bounding_box().points
+        x_values = [pt.x for pt in pts]
+        y_values = [pt.y for pt in pts]
+        width_x = max(x_values) - min(x_values)
+        width_y = max(y_values) - min(y_values)
+        return max(width_x, width_y)
     
     def triangulated_mesh(self):
         """Get the triangulated mesh data as vertices and faces.
@@ -624,6 +639,45 @@ class Branch:
         """
         graph = self.skeleton_bifurcation_graph()
         return get_bifurcation_angle(graph)
+
+    def skeleton_bifurcation_angles(self) -> Tuple[float, float, float]:
+        """Compute all three pairwise bifurcation angles on the skeleton graph.
+
+        The returned angles are measured at the bifurcation node using vectors
+        from the bifurcation node to each axis endpoint.
+
+        Returns
+        -------
+        tuple[float, float, float]
+            ``(angle_01, angle_12, angle_02)`` in degrees, where:
+            - ``angle_01`` is between axis 0 and axis 1,
+            - ``angle_12`` is between axis 1 and axis 2,
+            - ``angle_02`` is between axis 0 and axis 2.
+        """
+        graph = self.skeleton_bifurcation_graph()
+        bif_node = get_bifurcation_node(graph)
+
+        axis_0 = get_axis_path(graph, 0)
+        axis_1 = get_axis_path(graph, 1)
+        axis_2 = get_axis_path(graph, 2)
+
+        if len(axis_0) < 2 or len(axis_1) < 2 or len(axis_2) < 2:
+            raise ValueError("Bifurcation graph does not contain three valid axes.")
+
+        origin = Point(*bif_node)
+        p0 = Point(*axis_0[-1])
+        p1 = Point(*axis_1[-1])
+        p2 = Point(*axis_2[-1])
+
+        v0 = p0 - origin
+        v1 = p1 - origin
+        v2 = p2 - origin
+
+        angle_01 = math.degrees(v0.angle(v1))
+        angle_12 = math.degrees(v1.angle(v2))
+        angle_02 = math.degrees(v0.angle(v2))
+
+        return angle_01, angle_12, angle_02
 
     def compute_bifurcation_point(self, tolerance=5.0, resolution=30.0):
         """Compute the bifurcation point by walking from the bifurcation node toward the end nodes node by node of each axis simultaneously and calculate the angle until it matches with the bifurcation angle.

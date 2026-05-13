@@ -5,7 +5,6 @@ import math
 from platform import node
 from typing import List, Optional, Tuple
 
-from networkx import nodes
 import numpy as np
 import statistics
 

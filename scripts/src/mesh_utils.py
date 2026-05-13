@@ -59,18 +59,28 @@ def mesh_bounding_box(mesh):
     return bbox
 
 
-def load_branch_meshes(index: Optional[int] = None, precision=None) -> Tuple[List[Mesh], List[str]]:
-    """Load OBJ meshes from data/branches as COMPAS meshes.
+def load_branch_meshes(
+    index: Optional[int] = None,
+    precision=None,
+    load_bf: bool = True,
+    load_gb: bool = True,
+) -> Tuple[List[Mesh], List[str]]:
+    """Load branch meshes from data/branches as COMPAS meshes.
 
     Parameters
     ----------
     index : int, optional
         Optional branch index. If provided, only one mesh is loaded.
-        The function first tries to match branch naming (for example
-        ``index=3`` -> ``b-003.obj``). If that does not exist, it falls back
-        to 1-based positional selection in the sorted OBJ list.
+        The function first tries to match branch naming by id (for example
+        ``index=3`` -> ``b-003`` or ``t-003`` from the filename). If that does
+        not exist, it falls back to 1-based positional selection in the sorted
+        file list.
     precision : str, optional
         Optional precision passed to :meth:`compas.datastructures.Mesh.from_obj`.
+    load_bf : bool, optional
+        If ``True``, include files prefixed with ``bf-``. Default is ``True``.
+    load_gb : bool, optional
+        If ``True``, include files prefixed with ``gb-``. Default is ``True``.
 
     Returns
     -------
@@ -84,17 +94,26 @@ def load_branch_meshes(index: Optional[int] = None, precision=None) -> Tuple[Lis
     if not branches_dir.exists():
         raise FileNotFoundError("Branches folder not found: {}".format(branches_dir))
 
-    obj_files = sorted(
-        branches_dir.glob("*.obj"),
-        key=lambda p: _obj_sort_key(p.name),
+    mesh_files = sorted(
+        [
+            path
+            for path in branches_dir.iterdir()
+            if path.is_file() and path.suffix.lower() in {".obj", ".stl"}
+        ],
+        key=lambda p: _mesh_file_sort_key(p.name),
     )
 
-    if not obj_files:
-        return []
+    if not load_bf:
+        mesh_files = [path for path in mesh_files if not path.stem.lower().startswith("bf-")]
+    if not load_gb:
+        mesh_files = [path for path in mesh_files if not path.stem.lower().startswith("gb-")]
+
+    if not mesh_files:
+        return [], []
 
     selected: List[Path]
     if index is None:
-        selected = obj_files
+        selected = mesh_files
     else:
         try:
             idx = int(index)
@@ -104,25 +123,45 @@ def load_branch_meshes(index: Optional[int] = None, precision=None) -> Tuple[Lis
         if idx < 1:
             raise ValueError("index must be >= 1.")
 
-        branch_name = f"b-{idx:03d}"
-        name_match = next((p for p in obj_files if p.stem.lower() == branch_name), None)
+        b_name = f"b-{idx:03d}"
+        t_name = f"t-{idx:03d}"
+        name_match = next(
+            (
+                p
+                for p in mesh_files
+                if _extract_branch_id_from_filename(p.name).lower() in {b_name, t_name}
+            ),
+            None,
+        )
 
         if name_match is not None:
             selected = [name_match]
         else:
             position = idx - 1
-            if position >= len(obj_files):
+            if position >= len(mesh_files):
                 raise IndexError(
-                    "index {} out of range for {} OBJ files in {}".format(
+                    "index {} out of range for {} mesh files in {}".format(
                         idx,
-                        len(obj_files),
+                        len(mesh_files),
                         branches_dir,
                     )
                 )
-            selected = [obj_files[position]]
+            selected = [mesh_files[position]]
 
-    meshes = [Mesh.from_obj(str(path), precision=precision) for path in selected]
-    branch_ids = [path.stem for path in selected]
+    meshes: List[Mesh] = []
+    branch_ids: List[str] = []
+    for path in selected:
+        suffix = path.suffix.lower()
+        if suffix == ".stl":
+            try:
+                mesh = Mesh.from_stl(str(path), precision=precision)
+            except TypeError:
+                mesh = Mesh.from_stl(str(path))
+        else:
+            mesh = Mesh.from_obj(str(path), precision=precision)
+        meshes.append(mesh)
+        branch_ids.append(_extract_branch_id_from_filename(path.name))
+
     return meshes, branch_ids
 
 
@@ -266,9 +305,32 @@ def flip_mesh_top_bottom(mesh):
     return flipped_mesh 
 
 
-def _obj_sort_key(filename: str):
+def _mesh_file_sort_key(filename: str):
+    branch_id = _extract_branch_id_from_filename(filename).lower()
+    id_match = re.match(r"^(b|t)-(\d+)$", branch_id)
+    if id_match:
+        prefix, number = id_match.groups()
+        prefix_rank = 0 if prefix == "b" else 1
+        return (0, prefix_rank, int(number), branch_id)
+
     stem = Path(filename).stem
     match = re.search(r"(\d+)$", stem)
     if match:
         return (0, int(match.group(1)), stem.lower())
     return (1, stem.lower())
+
+
+def _extract_branch_id_from_filename(filename: str) -> str:
+    """Extract normalized branch id from a mesh filename.
+
+    Examples
+    --------
+    - ``b-001.obj`` -> ``b-001``
+    - ``gb-t-001.obj`` -> ``t-001``
+    - ``bf-t-102.stl`` -> ``t-102``
+    """
+    stem = Path(filename).stem
+    match = re.search(r"(?:^|[-_])([bt]-\d+)$", stem, flags=re.IGNORECASE)
+    if match:
+        return match.group(1).lower()
+    return stem.lower()
