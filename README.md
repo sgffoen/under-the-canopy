@@ -29,16 +29,16 @@ Teams select two themes (robotics, AI, extended reality), prepare short presenta
 
 | Time | Topic/Task | Notes |
 | :---- | :---- | :---- |
-| 09:00-10:00 | Intro | |
-| 09:15-10:00 | Why This Matters: Relevance & Framing | |
-| 10:00-11:00 | Material & Geometry Analysis | |
+| 09:00-09:15 | Intro | |
+| 09:15-09:45 | Why This Matters: Relevance & Framing | |
+| 09:45-11:00 | Material & Geometry Analysis | |
 | 11:00-11:30 | Structural Practice Contex | |
 | 11:30-12:30 | Topology & Configuration Study | Part 1 |
 | 12:30-13:30 | Lunch | |
 | 13:30-14:30 | Topology & Configuration Study | Part 2 |
-| 14:30-15:15 | Fabrication & Robotics Context | |
-| 15:30-16:45 | Team-Based Synthesis | |
-| 16:45-17:30 | Group Presentations & Final Discussion | |
+| 14:30-15:00 | Fabrication & Robotics Context | |
+| 15:00-16:00 | Team-Based Synthesis | |
+| 16:00-17:00 | Group Presentations & Final Discussion | |
 
 
 ## Team
