@@ -37,8 +37,8 @@ Teams select two themes (robotics, AI, extended reality), prepare short presenta
 | 12:30-13:30 | Lunch | |
 | 13:30-14:30 | Topology & Configuration Study | hands-on, part 2 |
 | 14:30-15:00 | Fabrication & Robotics Context | |
-| 15:00-16:00 | Team-Based Synthesis | |
-| 16:00-17:00 | Group Presentations & Final Discussion | |
+| 15:00-16:00 | Team-Based Synthesis | prepare presentation |
+| 16:00-17:00 | Group Presentations & Final Discussion | 15 min. per group |
 
 
 ## Team
