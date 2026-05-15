@@ -165,6 +165,51 @@ def load_branch_meshes(
     return meshes, branch_ids
 
 
+def load_scan_mesh(
+    precision=None,
+) -> Tuple[Mesh, str]:
+    """Load the most recent 3D scan mesh from data/3d_scan as a COMPAS mesh.
+
+    Parameters
+    ----------
+    precision : str, optional
+        Optional precision passed to :meth:`compas.datastructures.Mesh.from_obj`.
+
+    Returns
+    -------
+    tuple[:class:`compas.datastructures.Mesh`, str]
+        Loaded mesh and its filename stem.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the 3d_scan folder does not exist or contains no .obj files.
+    """
+    root = Path(__file__).resolve().parents[2]
+    scan_dir = root / "data" / "3d_scan"
+
+    if not scan_dir.exists():
+        raise FileNotFoundError("3D scan folder not found: {}".format(scan_dir))
+
+    mesh_files = sorted(
+        [
+            path
+            for path in scan_dir.iterdir()
+            if path.is_file() and path.suffix.lower() == ".obj"
+        ],
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )
+
+    if not mesh_files:
+        raise FileNotFoundError("No .obj files found in {}".format(scan_dir))
+
+    path = mesh_files[0]
+    mesh = Mesh.from_obj(str(path), precision=precision)
+
+    return mesh, path.stem
+
+
 def principal_axes(mesh: Mesh) -> Tuple[np.ndarray, np.ndarray]:
     """Compute the three principal axes of a mesh via PCA.
 
