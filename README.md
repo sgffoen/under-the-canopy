@@ -27,18 +27,18 @@ Teams select two themes (robotics, AI, extended reality), prepare short presenta
 
 ## Agenda
 
-| Time | Topic/Task | Notes |
-| :---- | :---- | :---- |
-| 09:00-09:15 | Intro | |
-| 09:15-09:45 | Why This Matters: Relevance & Framing | |
-| 09:45-11:00 | Material & Geometry Analysis | hands-on |
-| 11:00-11:30 | Structural Practice Contex | |
-| 11:30-12:30 | Topology & Configuration Study | hands-on, part 1 |
-| 12:30-13:30 | Lunch | |
-| 13:30-14:30 | Topology & Configuration Study | hands-on, part 2 |
-| 14:30-15:00 | Fabrication & Robotics Context | |
-| 15:00-16:00 | Team-Based Synthesis | prepare presentation |
-| 16:00-17:00 | Group Presentations & Final Discussion | 15 min. per group |
+| Time | Topic/Task | Notes | Links |
+| :---- | :---- | :---- | :---- |
+| 09:00-09:15 | Intro | | [Slides](https://docs.google.com/presentation/d/1PWScERihIzvM-K9BXr6XQjEVkUg2_qMz/edit?usp=sharing&ouid=101210106656166488684&rtpof=true&sd=true) |
+| 09:15-09:45 | Why This Matters: Relevance & Framing | | |
+| 09:45-11:00 | Material & Geometry Analysis | hands-on | |
+| 11:00-11:30 | Structural Practice Contex | | |
+| 11:30-12:30 | Topology & Configuration Study | hands-on, part 1 | |
+| 12:30-13:30 | Lunch | | |
+| 13:30-14:30 | Topology & Configuration Study | hands-on, part 2 | |
+| 14:30-15:00 | Fabrication & Robotics Context | | |
+| 15:00-16:00 | Team-Based Synthesis | prepare presentation | |
+| 16:00-17:00 | Group Presentations & Final Discussion | 15 min. per group | |
 
 
 ## Team
