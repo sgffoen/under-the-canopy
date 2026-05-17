@@ -39,10 +39,11 @@ After the environment is set up, the other Grasshopper files can be opened in or
 - `01_database.ghx` - Downloads OBJ branch meshes from the workshop database into the local `data/` folder.
 - `02_branch_overview.ghx` - Loads the branch meshes and preprocesses them for inspection and overview.
 - `03_centerline.ghx` - Computes branch centerlines, bifurcation points, and related centerline outputs.
+- `04_scan_to_branch.ghx` - process 3D scanned branch.
 
 ## Understanding the Workflow
 
-The Grasshopper files (`.ghx`) are the visual interface for this workflow. The Python scripts in the `src/` folder provide the core functionality used by these Grasshopper definitions.
+The Grasshopper files (`.ghx`) are the visual interface for this workflow. The Python scripts in the `src/` folder provide the core functionality used by these Grasshopper definitions. Geometry processing mostly done with [COMPAS](https://compas.dev/#/).
 
 ### Source Code
 
