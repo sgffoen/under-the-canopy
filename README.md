@@ -31,7 +31,7 @@ Teams select two themes (robotics, AI, extended reality), prepare short presenta
 | :---- | :---- | :---- | :---- |
 | 09:00-09:15 | Intro | | [Slides](https://docs.google.com/presentation/d/1PWScERihIzvM-K9BXr6XQjEVkUg2_qMz/edit?usp=sharing&ouid=101210106656166488684&rtpof=true&sd=true) |
 | 09:15-09:45 | Why This Matters: Relevance & Framing | | |
-| 09:45-11:00 | Material & Geometry Analysis | hands-on | |
+| 09:45-11:00 | Material & Geometry Analysis | hands-on | [Slides](https://docs.google.com/presentation/d/1qw7aoKi5rJ-WdgT370rRonajDbesxiqG/edit?usp=drive_link&ouid=101210106656166488684&rtpof=true&sd=true) |
 | 11:00-11:30 | Structural Practice Contex | | |
 | 11:30-12:30 | Topology & Configuration Study | hands-on, part 1 | |
 | 12:30-13:30 | Lunch | | |
