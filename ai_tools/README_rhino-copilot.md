@@ -47,3 +47,7 @@ RhinoCopilot features an intuitive dual-interface system designed to assist with
 
 ## 🎉 Good to Go!
 Your installation is complete. You can now leverage the power of RhinoCopilot to accelerate your design and rendering pipelines.
+
+## ⚠️ Important Limitations
+* **Multiple Instances**: **Do not try to open two instances of Rhino.**
+* **System Conflict**: Running multiple Rhino windows simultaneously will cause the system to get confused and may break the AI connection.
