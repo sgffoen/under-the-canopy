@@ -1,28 +1,22 @@
 # ShibaCopilot: Grasshopper Installation & Usage Guide
 
-**ShibaCopilot** brings the power of generative AI directly into your Grasshopper canvas. Follow these steps to install the plugin and start automating your computational design workflows.
+**ShibaCopilot** brings generative AI directly into your Grasshopper canvas. Follow these steps to install and automate your computational design workflows.
 
 ---
 
 ## 🚀 Installation Steps
 
-Because Grasshopper plugins often contain compiled libraries, following the unblocking procedure is essential for a successful installation.
+Grasshopper plugins often contain compiled libraries; following the unblocking procedure is essential.
 
 ### 1. Download and Unblock
 * **Download**: Obtain the `ShibaCopilot.zip` file.
-* **Unblock (Crucial)**: 
-    1. Before extracting, **right-click** the ZIP file.
-    2. Select **Properties**.
-    3. At the bottom of the General tab, check the **Unblock** box (if present) and click **Apply/OK**. 
-    *Note: Failing to do this may prevent the components from loading in Grasshopper.*
+* **Unblock (Crucial)**: Before extracting, **right-click** the ZIP file, select **Properties**, check the **Unblock** box at the bottom of the General tab, and click **Apply/OK**. 
+* **Note**: Failing to do this may prevent components from loading.
 
 ### 2. Extract and Move
 * **Extract**: Unzip the entire folder.
-* **Locate the Libraries Folder**: You need to move the extracted folder to your Grasshopper Libraries directory. You can find this in two ways:
-    * **Manual Path**: `C:\Users\{YourUsername}\AppData\Roaming\Grasshopper\Libraries`
-    * **Direct Access (Recommended)**: 
-        1. Open Rhino and launch Grasshopper.
-        2. In the Grasshopper menu, go to **File > Special Folders > Components Folder**.
+* **Locate the Libraries Folder**: Move the extracted folder to your Grasshopper Libraries directory.
+    * **Direct Access**: In Grasshopper, go to **File > Special Folders > Components Folder**.
 * **Install**: Drag and drop the **entire extracted folder** into this directory.
 
 ### 3. Restart
@@ -32,22 +26,37 @@ Because Grasshopper plugins often contain compiled libraries, following the unbl
 
 ## 🔑 Configuration & Credentials
 
-Upon first use, the plugin will require the following credentials to connect to the Shiba engine:
+Upon first use, the plugin requires these credentials to connect to the Shiba engine:
 
-* **Username**: *[Enter any username you prefer]*
+* **Username**: [Enter any preferred username]
 * **API Key**: `SHIBA2026`
 
 ---
 
 ## 💡 How to Use ShibaCopilot
 
-Once installed, you will find ShibaCopilot within your Grasshopper tabs.
+ShibaCopilot interacts directly with your active workspace using a **Select & Prompt** workflow.
 
-* **Generative Design**: Simply use the chat interface or prompt component to describe what you want to create.
-* **Automation**: Ask the AI to generate geometry, set up data trees, or suggest specific component logic. 
-* **Ready to Go**: Just ask whatever you want to create, and the system will generate the corresponding "stuff" directly on your canvas.
+### 🛠 Modifying Existing Scripts
+1. **Select** the specific components or script blocks you want to change.
+2. **Describe** the modification in the prompt (e.g., *"Change the data tree structure to Graft"* or *"Optimize this C# script"*).
+3. The AI will focus only on the **selected one** to modify.
+
+### 🔗 Referencing Component Outputs
+1. **Select** the component(s) whose output you want to use as context.
+2. **Tell the LLM** what to do with that data (e.g., *"Take the points from this component and create a Voronoi pattern"*).
+3. The system treats the selection as **context** for the new generation.
+
+### ✨ Fresh Generation
+* **Nothing Selected?** If no components are selected, ShibaCopilot will generate brand-new logic in an empty area of your canvas.
+
+---
+
+## ⚠️ Important Limitations
+* **Multiple Instances**: **Do not try to open two instances of Rhino.**
+* **System Conflict**: Running multiple Rhino windows simultaneously will cause the system to get confused and may break the AI connection.
 
 ---
 
 ## 🎉 Happy Scripting!
-You are now ready to leverage ShibaCopilot for your next computational project.
+You are now ready to leverage ShibaCopilot for your next project.
