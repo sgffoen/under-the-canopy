@@ -13,7 +13,7 @@ Getting RhinoCopilot up and running is quick and straightforward:
    - Open your active instance of Rhinoceros (Rhino).
    - Locate the downloaded `.rhp` file on your computer.
    - Drag the `.rhp` file and drop it directly into any active Rhino viewport or workspace.
-3. **Completion**: Rhino will automatically register and load the plugin. You are now ready to go!
+3. **Completion**: In Rhino, type "RhinoCopilot" in command prompt window then, load the plugin. You are now ready to go!
 
 ---
 
